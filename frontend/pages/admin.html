@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal — BlogSphere</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="nav-brand" aria-label="BlogSphere Home">
+        <img src="../assets/logo.svg" alt="BlogSphere" style="height: 38px;" />
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">☰</button>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="categories.html" class="nav-link">Categories</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="btn-icon theme-toggle-btn" aria-label="Toggle Light and Dark Mode" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <div id="nav-auth-container"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <h1 style="font-size: 2.25rem;">Admin Governance Portal</h1>
+            <span class="category-badge" style="background: var(--primary); color: #ffffff;">Admin Mode</span>
+          </div>
+          <p style="color: var(--text-muted);">Manage platform users, taxonomic categories, and global post moderation.</p>
+        </div>
+        <a href="dashboard.html" class="btn btn-secondary btn-sm">← Back to Dashboard</a>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.75rem; border-bottom: 1px solid var(--border-default); padding-bottom: 0.5rem;">
+        <button class="btn btn-secondary btn-sm admin-tab-btn active" data-tab="users">👥 Manage Users</button>
+        <button class="btn btn-secondary btn-sm admin-tab-btn" data-tab="categories">📂 Manage Categories</button>
+        <button class="btn btn-secondary btn-sm admin-tab-btn" data-tab="tags">🏷️ Manage Tags</button>
+      </div>
+
+      <!-- Tab 1: Users Management -->
+      <div class="admin-tab-panel" id="panel-users">
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User / Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Posts</th>
+                <th>Joined</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body">
+              <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Categories Management -->
+      <div class="admin-tab-panel" id="panel-categories" style="display: none;">
+        
+        <!-- Create Category Form -->
+        <div class="editor-card" style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Add New Category</h3>
+          <form id="create-category-form" style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="category-name-input">Category Name *</label>
+              <input type="text" id="category-name-input" class="form-input" placeholder="e.g. Data Science" required />
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="category-desc-input">Description</label>
+              <input type="text" id="category-desc-input" class="form-input" placeholder="Description of topics covered..." />
+            </div>
+            <button type="submit" id="create-category-btn" class="btn btn-primary" style="height: 44px;">Add Category</button>
+          </form>
+        </div>
+
+        <!-- Categories Table -->
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Slug</th>
+                <th>Description</th>
+                <th>Articles Count</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-categories-table-body">
+              <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading categories...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Tab 3: Tags Management -->
+      <div class="admin-tab-panel" id="panel-tags" style="display: none;">
+        <div class="editor-card">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Active Tags</h3>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.5rem;">Click the '×' button on any tag to remove it from the platform taxonomy.</p>
+          <div id="admin-tags-container" style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <!-- Rendered by admin.js -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>© 2026 BlogSphere. System Governance.</div>
+      <div><a href="dashboard.html">← Back to Dashboard</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/ui.js" type="module"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import { initAdminPortal } from '../js/admin.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdminPortal();
+    });
+  </script>
+</body>
+</html>

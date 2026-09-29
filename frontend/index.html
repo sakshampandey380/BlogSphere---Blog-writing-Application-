@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlogSphere — Ideas, Engineering & Architecture</title>
+  <meta name="description" content="Discover thoughtful articles, tutorials, and stories from developers, engineers, and tech creators." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand" aria-label="BlogSphere Home">
+        <img src="assets/logo.svg" alt="BlogSphere" style="height: 38px;" />
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="pages/categories.html" class="nav-link">Categories</a></li>
+        <li><a href="#posts-section" class="nav-link">Articles</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Theme Switcher Toggle -->
+        <button class="btn-icon theme-toggle-btn" aria-label="Toggle Light and Dark Mode" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <!-- Auth State Container -->
+        <div id="nav-auth-container" style="display: flex; align-items: center; gap: 0.75rem;">
+          <a href="pages/login.html" class="btn btn-outline btn-sm">Sign In</a>
+          <a href="pages/register.html" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero container">
+      <div class="hero-badge">
+        <span>🚀 Modern Publishing Platform</span>
+      </div>
+      <h1 class="hero-title">
+        Discover Ideas. <span>Read. Learn. Create.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Explore thoughtful articles, tutorials, stories and ideas from our community of developers, architects, and creators.
+      </p>
+      <div class="hero-actions">
+        <a href="#posts-section" class="btn btn-primary btn-lg">Explore Posts</a>
+        <a href="pages/create-post.html" class="btn btn-secondary btn-lg">Start Writing</a>
+      </div>
+    </section>
+
+    <!-- Featured Post Showcase -->
+    <section class="container featured-section" id="featured-post-container" style="display: none;">
+      <!-- Featured card rendered dynamically by posts.js -->
+    </section>
+
+    <!-- Posts Feed & Search Section -->
+    <section class="container" id="posts-section">
+      
+      <!-- Filter Bar -->
+      <div class="filters-bar">
+        <!-- Backend-Powered Search Input -->
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search articles by title, keywords, excerpt or tags..."
+            aria-label="Search articles"
+          />
+          <button id="search-clear-btn" class="search-clear-btn" aria-label="Clear search">✕</button>
+        </div>
+
+        <!-- Dynamic Category Pills -->
+        <div class="category-pills-scroll" id="category-pills" role="tablist">
+          <button class="category-pill active">All Posts</button>
+        </div>
+
+        <!-- Active Filter Alert -->
+        <div id="active-filter-notice" style="display: none;"></div>
+      </div>
+
+      <!-- Section Header -->
+      <div class="section-header">
+        <h2 class="section-title">Latest Articles</h2>
+      </div>
+
+      <!-- Responsive Posts Grid (3-col Desktop, 2-col Tablet, 1-col Mobile) -->
+      <div class="posts-grid" id="posts-grid">
+        <!-- Rendered by posts.js -->
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination-container"></div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <img src="assets/logo.svg" alt="BlogSphere" style="height: 34px; margin-bottom: 1rem;" />
+          <p style="font-size: 0.92rem; color: var(--text-muted); max-width: 320px;">
+            A premier open publishing and content management platform built for modern developers and creators.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="pages/categories.html">All Categories</a></li>
+            <li><a href="index.html?featured=true">Featured Articles</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Community</h5>
+          <ul class="footer-links">
+            <li><a href="pages/create-post.html">Write an Article</a></li>
+            <li><a href="pages/dashboard.html">Author Dashboard</a></li>
+            <li><a href="pages/profile.html">Member Profile</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>API & Tech</h5>
+          <ul class="footer-links">
+            <li><a href="http://127.0.0.1:8000/docs" target="_blank">Interactive Swagger Docs</a></li>
+            <li><a href="http://127.0.0.1:8000/redoc" target="_blank">ReDoc Documentation</a></li>
+            <li><a href="pages/login.html">Sign In</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 BlogSphere. Crafted with FastAPI, MySQL, and Modern Web Standards.</div>
+        <div>Engineered for high performance, accessibility, and clean design.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/ui.js" type="module"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js" type="module"></script>
+
+  <script type="module">
+    import { initHomePage } from './js/posts.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      initHomePage();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Author Profile — BlogSphere</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="nav-brand" aria-label="BlogSphere Home">
+        <img src="../assets/logo.svg" alt="BlogSphere" style="height: 38px;" />
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">☰</button>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="categories.html" class="nav-link">Categories</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="btn-icon theme-toggle-btn" aria-label="Toggle Light and Dark Mode" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <div id="nav-auth-container"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container" style="max-width: 800px;">
+      
+      <div class="section-header" style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.25rem;">Profile & Account Settings</h1>
+      </div>
+
+      <!-- Profile Overview Card -->
+      <div class="editor-card" style="margin-bottom: 2rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+        <img
+          id="profile-overview-avatar"
+          src="../assets/default-avatar.svg"
+          alt="Avatar"
+          style="width: 100px; height: 100px; border-radius: var(--radius-full); object-fit: cover; border: 3px solid var(--primary-light);"
+        />
+        <div style="flex-grow: 1;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+            <h2 id="profile-overview-name" style="font-size: 1.5rem;">Author Name</h2>
+            <span id="profile-overview-role" class="category-badge" style="font-size: 0.75rem;">User</span>
+          </div>
+          <p id="profile-overview-email" style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.75rem;">email@example.com</p>
+          <div style="display: flex; gap: 1.5rem; font-size: 0.88rem; color: var(--text-secondary);">
+            <span>📝 <strong id="profile-overview-posts">0</strong> Articles</span>
+            <span>👁️ <strong id="profile-overview-views">0</strong> Total Readers</span>
+            <span>📅 Joined <strong id="profile-overview-joined">—</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Profile Form -->
+      <div class="editor-card">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">Edit Public Details</h3>
+        
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label" for="profile-name">Full Name</label>
+            <input
+              type="text"
+              id="profile-name"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="profile-avatar-url">Profile Image URL</label>
+            <input
+              type="url"
+              id="profile-avatar-url"
+              class="form-input"
+              placeholder="https://images.unsplash.com/..."
+            />
+            <div class="form-hint">Enter a direct image URL (JPG, PNG, WebP) for your author avatar.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="profile-bio">Bio</label>
+            <textarea
+              id="profile-bio"
+              class="form-textarea"
+              rows="3"
+              placeholder="Tell the community about yourself, your engineering focus, or what you write about..."
+            ></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+            <button type="submit" id="btn-save-profile" class="btn btn-primary">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>© 2026 BlogSphere. Author Settings.</div>
+      <div><a href="dashboard.html">← Back to Dashboard</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/ui.js" type="module"></script>
+  <script src="../js/auth.js"></script>
+
+  <script type="module">
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!window.auth.requireAuth()) return;
+
+      const avatarImg = document.getElementById("profile-overview-avatar");
+      const nameEl = document.getElementById("profile-overview-name");
+      const emailEl = document.getElementById("profile-overview-email");
+      const roleEl = document.getElementById("profile-overview-role");
+      const postsEl = document.getElementById("profile-overview-posts");
+      const viewsEl = document.getElementById("profile-overview-views");
+      const joinedEl = document.getElementById("profile-overview-joined");
+
+      const nameInput = document.getElementById("profile-name");
+      const avatarInput = document.getElementById("profile-avatar-url");
+      const bioInput = document.getElementById("profile-bio");
+      const form = document.getElementById("profile-edit-form");
+      const saveBtn = document.getElementById("btn-save-profile");
+
+      try {
+        const res = await window.api.get("/users/me");
+        if (res && res.success && res.data) {
+          const u = res.data;
+          nameEl.textContent = u.name;
+          emailEl.textContent = u.email;
+          roleEl.textContent = u.role.toUpperCase();
+          postsEl.textContent = u.posts_count || 0;
+          viewsEl.textContent = u.views_count || 0;
+          joinedEl.textContent = window.formatDate(u.created_at);
+
+          if (u.profile_image) {
+            avatarImg.src = u.profile_image;
+          }
+
+          nameInput.value = u.name;
+          avatarInput.value = u.profile_image || "";
+          bioInput.value = u.bio || "";
+        }
+      } catch (err) {
+        window.showToast("Failed to load profile data", "error");
+      }
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+
+        const payload = {
+          name: nameInput.value.trim(),
+          profile_image: avatarInput.value.trim() || null,
+          bio: bioInput.value.trim() || null,
+        };
+
+        try {
+          const res = await window.api.put("/users/me", payload);
+          if (res && res.success) {
+            window.showToast("✓ Profile updated successfully!", "success");
+            // Update cached session user
+            window.auth.saveSession(null, res.data);
+            nameEl.textContent = res.data.name;
+            if (res.data.profile_image) {
+              avatarImg.src = res.data.profile_image;
+            }
+          }
+        } catch (err) {
+          window.showToast(err.message || "Failed to update profile", "error");
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "Save Changes";
+        }
+      };
+    });
+  </script>
+</body>
+</html>
