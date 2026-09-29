@@ -4,11 +4,14 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![MySQL](https://img.shields.io/badge/MySQL-InnoDB-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com)
 [![Tests](https://img.shields.io/badge/Tests-22%20Passed-10B981?style=flat&logo=pytest&logoColor=white)]()
+[![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![License](https://img.shields.io/badge/License-MIT-6366F1?style=flat)]()
 
 **BlogSphere** is a modern, high-performance, full-stack blogging platform and Content Management System (CMS) engineered with **FastAPI**, **SQLAlchemy ORM**, **MySQL (InnoDB / XAMPP / WAMP)**, and a **vanilla HTML5/CSS3/JavaScript** frontend.
 
-Designed from the ground up to reflect a real-world, production-ready publishing environment—not a beginner CRUD tutorial—it features complete JWT authentication, role-based authorization (User / Admin), automated slug generation with collision handling, live reading time calculations, HTML sanitization (XSS defense), view counter tracking, interactive tag chip inputs, dark/light themes, threaded comments, and a responsive administration suite.
+Designed to reflect a real-world publishing environment rather than a basic CRUD tutorial, BlogSphere provides complete JWT authentication, role-based authorization, automated slug generation with collision handling, live reading-time calculations, HTML sanitization for XSS defense, view tracking, interactive tag inputs, dark/light themes, threaded comments, author dashboards, and a responsive administration suite.
+
+The platform provides a complete publishing workflow from registration and authentication to article creation, drafting, publishing, discovery, reading, comments, moderation, and administration.
 
 ---
 
@@ -25,8 +28,12 @@ Designed from the ground up to reflect a real-world, production-ready publishing
 - [Pre-Seeded Demo Credentials](#-pre-seeded-demo-credentials)
 - [Interactive API Documentation](#-interactive-api-documentation)
 - [REST API Endpoints Reference](#-rest-api-endpoints-reference)
+- [Publishing Workflow](#-publishing-workflow)
 - [Automated Testing Suite](#-automated-testing-suite)
-- [Security & Defense In Depth](#-security--defense-in-depth)
+- [Security & Defense in Depth](#-security--defense-in-depth)
+- [Key Learning Outcomes](#-key-learning-outcomes)
+- [Developer](#-developer)
+- [License](#-license)
 
 ---
 
@@ -34,64 +41,219 @@ Designed from the ground up to reflect a real-world, production-ready publishing
 
 ```mermaid
 flowchart TD
-    User([Browser Client]) -->|HTTP / JSON Requests| StaticServer[Frontend Engine & Static Router]
-    StaticServer -->|API Calls + JWT Bearer| FastAPIApp[FastAPI REST API Backend]
-    
-    subgraph FastAPIApp
-        AuthMiddleware[JWT Auth & RBAC Guard]
-        RouterLayer[API Routers: Auth, Posts, Categories, Tags, Comments, Dashboard]
+    User([Browser Client]) -->|HTTP / JSON| Frontend[Vanilla HTML5 / CSS3 / JavaScript]
+
+    Frontend -->|API Calls + JWT Bearer| FastAPIApp[FastAPI REST API]
+
+    subgraph Backend["FastAPI Backend"]
+        Auth[JWT Authentication & RBAC]
+        Routers[API Routers]
+        Validation[Pydantic Validation]
         Sanitizer[HTML Content Sanitizer]
         ORM[SQLAlchemy ORM 2.0]
     end
 
-    AuthMiddleware --> RouterLayer
-    RouterLayer --> Sanitizer
-    RouterLayer --> ORM
-    ORM -->|PyMySQL Connection Pool| MySQLDB[(MySQL Database: blogsphere)]
+    FastAPIApp --> Auth
+    Auth --> Routers
+    Routers --> Validation
+    Routers --> Sanitizer
+    Routers --> ORM
+
+    ORM -->|PyMySQL| MySQLDB[(MySQL Database)]
+
+    MySQLDB --> Users[(Users)]
+    MySQLDB --> Posts[(Posts)]
+    MySQLDB --> Categories[(Categories)]
+    MySQLDB --> Tags[(Tags)]
+    MySQLDB --> Comments[(Comments)]
+    MySQLDB --> Views[(Post Views)]
 ```
 
 ---
 
 ## ✨ Key Features
 
-### 🌍 Public Visitors
-- **Responsive Magazine Feed**: 3-column desktop, 2-column tablet, 1-column mobile post cards.
-- **Hero Showcase**: Prominently displays featured community articles with reading metrics.
-- **Backend-Powered Search**: Real-time debounced search indexing post titles, excerpts, content, and tags (`GET /api/posts?search=...`).
-- **Dynamic Category Filtering**: Database-driven category tabs with live post counts.
-- **Article Reader View**: Complete typography hierarchy (`.prose`), sanitized HTML rendering, code syntax blocks, blockquotes, author bios, and publication dates.
-- **View Counter**: Unique session view tracking incrementing `views_count` in MySQL.
-- **Social Sharing**: One-click sharing to LinkedIn, X (Twitter), and clipboard copy with toast feedback.
-- **Related Articles**: Recommendations based on shared category and matching tags.
-- **Discussion System**: Threaded comments supporting both authenticated members and guest readers.
+## 🌍 Public Visitors
 
-### ✍️ Authorized Authors
-- **Authentication**: JWT authentication with bcrypt password hashing and token persistence.
-- **Post Studio**:
-  - Auto-generated URL slugs from article titles with manual override capability.
-  - Interactive tag chip builder (type and press `Enter` or `,`).
-  - Rich formatting toolbar (Bold, Italic, Headings H2/H3, Quotes, Code Blocks, Lists, Links).
-  - Live writing stats (dynamic word count and calculated reading time `X min read`).
-  - Side-by-side **Live Preview** tab with markdown-to-HTML rendering.
-  - Featured image preview and category assignment.
-  - Status management: Save as **Draft** or **Publish** immediately.
-- **Author Dashboard**:
-  - Live metric counters: Total Articles, Published, Drafts, and Total Views.
-  - Post management data table with status badges and quick action controls (View, Edit, Toggle Publish/Unpublish, Delete with confirmation modal).
-- **Profile Management**: Update public display name, biography, and author avatar image.
+- Responsive magazine-style feed
+- 3-column desktop layout
+- 2-column tablet layout
+- 1-column mobile layout
+- Featured article showcase
+- Reading metrics
+- Backend-powered search
+- Search across titles, excerpts, content, and tags
+- Dynamic category filtering
+- Live category post counts
+- Article reader view
+- Structured typography
+- Sanitized HTML rendering
+- Code blocks
+- Blockquotes
+- Author information
+- Publication dates
+- View counter
+- Related articles
+- Social sharing
+- LinkedIn sharing
+- X/Twitter sharing
+- Clipboard copy
+- Toast feedback
+- Public comments
+- Threaded discussions
+- Guest reader comments where supported
 
-### 🛡️ Platform Administrators
-- **Administrative Governance Portal** (`/pages/admin.html`):
-  - **User Governance**: Inspect all registered users, toggle active/deactive status, promote or demote between `user` and `admin` roles.
-  - **Category Management**: Create, edit, and delete categories with automated cascading rules.
-  - **Tag Taxonomy**: View active tags with usage counters and prune outdated tags.
-  - **Global Moderation**: View, edit, or delete any article across all platform authors.
+---
 
-### 🎨 Design & Accessibility
-- **Theme Engine**: Light Mode, Dark Mode, and System Preference detection persisted in `localStorage`.
-- **Toast Notifications**: Reusable, animated toast system for instant feedback.
-- **Accessible Dialogs**: Modal confirmations for destructive operations (preventing accidental deletion).
-- **Skeleton Shimmers**: Visual loading state placeholders while API data resolves.
+## ✍️ Authorized Authors
+
+### Authentication
+
+Authors can:
+
+- Register
+- Login
+- Logout
+- Access protected resources
+- Maintain authenticated sessions
+- Manage profiles
+
+Authentication uses:
+
+- JWT
+- bcrypt
+- Bearer-token authorization
+
+### Post Studio
+
+The editor provides:
+
+- Automatic URL slug generation
+- Manual slug override
+- Slug collision handling
+- Interactive tag-chip builder
+- Rich formatting toolbar
+- Bold
+- Italic
+- H2/H3 headings
+- Quotes
+- Code blocks
+- Lists
+- Links
+- Live word count
+- Reading-time calculation
+- Live preview
+- Featured image preview
+- Category assignment
+- Draft saving
+- Immediate publishing
+
+### Author Dashboard
+
+Dashboard metrics include:
+
+- Total Articles
+- Published Articles
+- Drafts
+- Total Views
+
+Post management supports:
+
+- View
+- Edit
+- Publish
+- Unpublish
+- Delete
+- Confirmation dialogs
+- Status badges
+
+### Profile Management
+
+Authors can manage:
+
+- Display name
+- Biography
+- Avatar/profile image
+- Public profile information
+
+---
+
+## 🛡️ Platform Administrators
+
+BlogSphere includes an administration portal.
+
+### User Governance
+
+Administrators can:
+
+- Inspect registered users
+- Activate/deactivate accounts
+- Promote users to admin
+- Demote admins to users
+- Manage user accounts
+
+### Category Management
+
+Administrators can:
+
+- Create categories
+- Edit categories
+- Delete categories
+- Manage category metadata
+
+### Tag Taxonomy
+
+Administrators can:
+
+- View tags
+- View usage counts
+- Remove outdated tags
+- Maintain the platform taxonomy
+
+### Global Moderation
+
+Administrators can:
+
+- View articles
+- Edit articles
+- Delete articles
+- Moderate content across authors
+
+---
+
+## 🎨 Design & Accessibility
+
+### 🌓 Theme Engine
+
+Supports:
+
+- Light Mode
+- Dark Mode
+- System preference detection
+- Persistent theme settings using `localStorage`
+
+### 🔔 Toast Notifications
+
+Reusable animated notifications provide feedback for:
+
+- Successful operations
+- Errors
+- Authentication
+- Content actions
+- Validation
+
+### ⚠️ Accessible Dialogs
+
+Confirmation dialogs are used for destructive operations such as:
+
+- Delete post
+- Delete category
+- Delete tag
+- Other irreversible actions
+
+### 💀 Loading States
+
+Skeleton shimmer placeholders provide visual feedback while API data is loading.
 
 ---
 
@@ -99,148 +261,341 @@ flowchart TD
 
 | Layer | Technology | Details |
 |---|---|---|
-| **Backend Framework** | Python 3.11+ / FastAPI | High-throughput asynchronous REST API |
-| **ORM & Driver** | SQLAlchemy 2.0 + PyMySQL | Connection pooling, pre-ping validation, relation cascades |
-| **Database** | MySQL 5.7+ / 8.0+ / MariaDB | Tested with XAMPP, WAMP, and phpMyAdmin |
-| **Security** | Passlib, Bcrypt 5.0, Python-Jose | 12-round bcrypt salt, HMAC-SHA256 JWT tokens |
-| **Sanitization** | BeautifulSoup4 | Whitelist-based HTML filter for XSS protection |
-| **Frontend** | HTML5, CSS3, Vanilla ES6+ JS | Zero heavy UI frameworks, native browser speed |
-| **Testing** | Pytest 9.1+, HTTPX, TestClient | In-memory SQLite fixtures + live MySQL tests |
+| Backend | Python 3.11+ / FastAPI | REST API |
+| ORM | SQLAlchemy 2.0 | Database ORM |
+| Driver | PyMySQL | MySQL connectivity |
+| Database | MySQL / InnoDB | Relational storage |
+| Authentication | JWT | Bearer-token authentication |
+| Password Security | bcrypt | Password hashing |
+| Authorization | Role-Based Access Control | User/Admin permissions |
+| Sanitization | BeautifulSoup4 | XSS protection |
+| Frontend | HTML5 / CSS3 / Vanilla ES6+ JS | Responsive UI |
+| Testing | Pytest / HTTPX / TestClient | Automated testing |
+| Local Database Tools | XAMPP / WAMP / phpMyAdmin | Development |
+| API Documentation | Swagger / ReDoc | Interactive API docs |
 
 ---
 
 ## 📁 Project Directory Structure
 
 ```text
-c:\xampp\htdocs\QSkills - Task -2\
-├── schema.sql                         # Complete standalone MySQL DDL schema
-├── requirements.txt                   # Backend Python dependencies
-├── .env.example                       # Environment template
-├── .env                               # Local active environment configuration
-├── run_server.py                      # One-click launcher for backend & frontend
+QSkills - Task -2/
+│
+├── schema.sql
+├── requirements.txt
+├── .env.example
+├── .env
+├── run_server.py
 │
 ├── backend/
 │   ├── app/
-│   │   ├── config.py                  # Pydantic BaseSettings & env loader
-│   │   ├── database.py                # SQLAlchemy engine, session maker & get_db
-│   │   ├── models.py                  # Declarative ORM models (Users, Posts, Tags, etc.)
-│   │   ├── schemas.py                 # Pydantic v2 validation models
-│   │   ├── auth.py                    # JWT extraction & role-based dependencies
-│   │   ├── seed.py                    # Database seeder (users, articles, tags, comments)
-│   │   ├── main.py                    # FastAPI application, CORS & static frontend mount
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   ├── auth.py
+│   │   ├── seed.py
+│   │   ├── main.py
+│   │   │
 │   │   ├── utils/
-│   │   │   ├── security.py            # Bcrypt hashing & JWT encode/decode
-│   │   │   ├── sanitizer.py           # Content HTML sanitizer (XSS defense)
-│   │   │   └── helpers.py             # Slug generator, reading time calculator
+│   │   │   ├── security.py
+│   │   │   ├── sanitizer.py
+│   │   │   └── helpers.py
+│   │   │
 │   │   └── routes/
-│   │       ├── auth.py                # /api/auth (register, login, logout, me)
-│   │       ├── posts.py               # /api/posts (CRUD, search, slug, publish, views)
-│   │       ├── categories.py          # /api/categories (CRUD, post counts)
-│   │       ├── tags.py                # /api/tags (CRUD)
-│   │       ├── users.py               # /api/users (profile, admin controls)
-│   │       ├── dashboard.py           # /api/dashboard (stats, author posts)
-│   │       └── comments.py            # /api/posts/{id}/comments
+│   │       ├── auth.py
+│   │       ├── posts.py
+│   │       ├── categories.py
+│   │       ├── tags.py
+│   │       ├── users.py
+│   │       ├── dashboard.py
+│   │       └── comments.py
+│   │
 │   └── tests/
-│       ├── conftest.py                # Pytest fixtures & in-memory test database
-│       ├── test_auth.py               # Auth & registration tests
-│       ├── test_posts.py              # Post CRUD, slug, views & permission tests
-│       └── test_categories_tags.py    # Taxonomy & role tests
+│       ├── conftest.py
+│       ├── test_auth.py
+│       ├── test_posts.py
+│       └── test_categories_tags.py
 │
 └── frontend/
-    ├── index.html                     # Public homepage & article feed
+    ├── index.html
+    │
     ├── assets/
-    │   ├── logo.svg                   # Brand SVG logo
-    │   └── default-avatar.svg         # Default author avatar
+    │   ├── logo.svg
+    │   └── default-avatar.svg
+    │
     ├── css/
-    │   ├── style.css                  # Design tokens, themes (light/dark), reset
-    │   ├── components.css             # Navigation, cards, modal, toast, prose styles
-    │   └── responsive.css             # Tablet & mobile media queries
+    │   ├── style.css
+    │   ├── components.css
+    │   └── responsive.css
+    │
     ├── js/
-    │   ├── api.js                     # Fetch wrapper with Bearer token interceptor
-    │   ├── auth.js                    # Session state, login/logout, navbar sync
-    │   ├── ui.js                      # Toast alerts, confirm modal, theme engine
-    │   ├── posts.js                   # Homepage feed, search, post view & comments
-    │   ├── dashboard.js               # Author dashboard metrics & posts table
-    │   ├── editor.js                  # Post editor, auto-slug, tag chips, toolbar
-    │   ├── admin.js                   # Admin user & category governance
-    │   └── validation.js              # Client-side validation helpers
+    │   ├── api.js
+    │   ├── auth.js
+    │   ├── ui.js
+    │   ├── posts.js
+    │   ├── dashboard.js
+    │   ├── editor.js
+    │   ├── admin.js
+    │   └── validation.js
+    │
     └── pages/
-        ├── post.html                  # Article details & reading experience
-        ├── create-post.html           # New article editor
-        ├── edit-post.html             # Existing article editor
-        ├── dashboard.html             # Author & admin dashboard
-        ├── login.html                 # Sign In with demo quick-fill
-        ├── register.html              # Sign Up
-        ├── profile.html               # Author profile & bio settings
-        ├── categories.html            # Category topic directory
-        └── admin.html                 # Administrator governance portal
+        ├── post.html
+        ├── create-post.html
+        ├── edit-post.html
+        ├── dashboard.html
+        ├── login.html
+        ├── register.html
+        ├── profile.html
+        ├── categories.html
+        └── admin.html
 ```
 
 ---
 
 ## 🗄️ Database Architecture & Schema
 
-The database is built on **MySQL (InnoDB)** using character set `utf8mb4`:
+The database uses **MySQL / InnoDB** with `utf8mb4` character encoding.
 
-1. **`users`**: Unique email, hashed password, role (`user`, `admin`), profile image, bio, status (`is_active`).
-2. **`user_settings`**: Theme preference, email notifications, visibility settings.
-3. **`categories`**: Unique name, unique URL slug, description, author reference.
-4. **`posts`**: Title, unique URL slug, excerpt, sanitized content (`LONGTEXT`), featured image URL, status (`draft`, `published`, `archived`), `is_featured`, `views_count`, `reading_time_minutes`, `published_at`.
-5. **`tags`**: Unique tag name and URL-safe slug.
-6. **`post_tags`**: Composite primary key `(post_id, tag_id)` for many-to-many relationship with foreign key cascades.
-7. **`comments`**: Post reference, user reference or guest name/email, content, status (`approved`, `pending`, `spam`).
-8. **`post_views`**: View logging tracking post ID, visitor identifier, IP hash, and timestamp to prevent duplicate counts.
+### `users`
 
-### Importing Schema into MySQL / phpMyAdmin:
-- Open phpMyAdmin at `http://localhost/phpmyadmin/`.
-- Create or select the `blogsphere` database.
-- Click **Import** and upload `schema.sql`, or execute it via terminal:
-```bash
-& "C:\xampp\mysql\bin\mysql.exe" -u root -e "SOURCE c:/xampp/htdocs/QSkills - Task -2/schema.sql"
+Stores:
+
+- Unique email
+- Hashed password
+- Role
+- Display name
+- Profile image
+- Biography
+- Active/inactive status
+- Timestamps
+
+### `user_settings`
+
+Stores:
+
+- Theme preference
+- Email notification settings
+- Visibility preferences
+
+### `categories`
+
+Stores:
+
+- Category name
+- Unique URL slug
+- Description
+- Author/reference information
+
+### `posts`
+
+Stores:
+
+- Title
+- Unique URL slug
+- Excerpt
+- Sanitized content
+- Featured image
+- Status
+- Featured flag
+- View count
+- Reading time
+- Publication date
+- Author
+- Category
+
+Supported statuses:
+
+```text
+draft
+published
+archived
+```
+
+### `tags`
+
+Stores:
+
+- Tag name
+- URL-safe slug
+
+### `post_tags`
+
+Provides the many-to-many relationship between posts and tags.
+
+```text
+post_id ↔ tag_id
+```
+
+### `comments`
+
+Supports:
+
+- Authenticated comments
+- Guest comments where enabled
+- Comment content
+- Comment status
+- Threaded relationships
+- Post references
+- User references
+
+### `post_views`
+
+Tracks:
+
+- Post ID
+- Visitor identifier
+- IP hash
+- Timestamp
+
+This supports view tracking and duplicate-view prevention.
+
+---
+
+## 🧬 Database Relationship Diagram
+
+```mermaid
+erDiagram
+    USERS ||--|| USER_SETTINGS : owns
+    USERS ||--o{ POSTS : authors
+    USERS ||--o{ CATEGORIES : creates
+    USERS ||--o{ COMMENTS : writes
+
+    CATEGORIES ||--o{ POSTS : contains
+
+    POSTS ||--o{ POST_TAGS : contains
+    TAGS ||--o{ POST_TAGS : assigned_to
+
+    POSTS ||--o{ COMMENTS : receives
+    COMMENTS ||--o{ COMMENTS : replies_to
+
+    POSTS ||--o{ POST_VIEWS : records
 ```
 
 ---
 
 ## ⚙️ Environment Variables
 
-The project reads settings from `.env`:
+Create a local `.env` file.
+
+Example:
 
 ```ini
-# Database Configuration (MySQL / XAMPP / WAMP)
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=blogsphere
 
-# Security & JWT Configuration
-SECRET_KEY=blogsphere_super_secret_jwt_key_2026_change_in_production
+SECRET_KEY=change_this_secret_key_in_production
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
-# Server Configuration
 APP_HOST=127.0.0.1
 APP_PORT=8000
 APP_DEBUG=True
+
 CORS_ORIGINS=*
 ```
+
+> **Security:** Never commit the actual `.env` file or production secrets to GitHub.
 
 ---
 
 ## 🚀 Local Setup & Installation
 
-### Step 1: Start MySQL in XAMPP / WAMP
-Make sure MySQL is running on port `3306` (via the XAMPP Control Panel).
+### Step 1 — Start MySQL
 
-### Step 2: Install Python Dependencies
-Open PowerShell or your terminal in the project directory:
+Start MySQL using XAMPP, WAMP, or MySQL Server.
+
+Default port:
+
+```text
+3306
+```
+
+### Step 2 — Create Database
+
+Open:
+
+```text
+http://localhost/phpmyadmin/
+```
+
+Create:
+
+```text
+blogsphere
+```
+
+### Step 3 — Import Schema
+
+Import:
+
+```text
+schema.sql
+```
+
+using phpMyAdmin.
+
+Or use the MySQL command line:
+
 ```bash
-cd "c:\xampp\htdocs\QSkills - Task -2"
+mysql -u root -p
+```
+
+Then:
+
+```sql
+SOURCE schema.sql;
+```
+
+### Step 4 — Create Virtual Environment
+
+Windows:
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+Linux/macOS:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### Step 5 — Install Dependencies
+
+```bash
 python -m pip install -r requirements.txt
 ```
 
-### Step 3: Seed Database with Demo Content
-Run the automated seeder to populate sample users, categories, tags, and articles:
+If required:
+
+```bash
+pip install fastapi uvicorn[standard] sqlalchemy pymysql cryptography pydantic pydantic-settings python-jose[cryptography] bcrypt python-dotenv beautifulsoup4 pytest httpx
+```
+
+### Step 6 — Configure Environment
+
+Create `.env` using `.env.example` and configure:
+
+```ini
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=blogsphere
+
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+```
+
+### Step 7 — Seed Demo Data
+
 ```bash
 python backend/app/seed.py
 ```
@@ -249,24 +604,37 @@ python backend/app/seed.py
 
 ## 💻 Running the Application
 
-### Option A: Unified FastAPI Full-Stack Server (Recommended)
-FastAPI directly serves the backend APIs and mounts the frontend:
+### Option A — Unified Server
+
+Recommended:
+
 ```bash
 python run_server.py
 ```
-Or with uvicorn directly:
+
+### Option B — Uvicorn
+
 ```bash
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-- **Web Frontend**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-- **Interactive Swagger API Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **ReDoc API Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+### Frontend
 
-### Option B: Apache (XAMPP) + FastAPI API Server
-If Apache is running in XAMPP, you can open:
-`http://localhost/QSkills - Task -2/frontend/`
-*(The API client in `frontend/js/api.js` automatically detects this and communicates with `http://127.0.0.1:8000/api` seamlessly).*
+```text
+http://127.0.0.1:8000/
+```
+
+### Swagger
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### ReDoc
+
+```text
+http://127.0.0.1:8000/redoc
+```
 
 ---
 
@@ -278,102 +646,348 @@ If Apache is running in XAMPP, you can open:
 | **Author** | Alex Morgan | `alex.morgan@blogsphere.dev` | `AuthorPassword123!` |
 | **Author** | Sophia Chen | `sophia.chen@blogsphere.dev` | `AuthorPassword123!` |
 
-*(On the Login screen, click **"🛡️ Fill Admin"** or **"✍️ Fill Author"** for instant 1-click credential filling).*
+The login interface can provide quick-fill options:
+
+```text
+🛡️ Fill Admin
+✍️ Fill Author
+```
+
+> Change demo credentials and secrets before deploying publicly.
+
+---
+
+## 📚 Interactive API Documentation
+
+### Swagger UI
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Swagger provides:
+
+- Endpoint inspection
+- Request schema inspection
+- API testing
+- Bearer authentication
+- Response inspection
+- Backend debugging
+
+### ReDoc
+
+```text
+http://127.0.0.1:8000/redoc
+```
 
 ---
 
 ## 📡 REST API Endpoints Reference
 
-### Authentication (`/api/auth`)
-- `POST /api/auth/register` — Register new user account.
-- `POST /api/auth/login` — Authenticate and retrieve JWT Bearer token.
-- `POST /api/auth/logout` — Invalidate user session.
-- `GET /api/auth/me` — Retrieve current user profile and settings.
+### Authentication — `/api/auth`
 
-### Articles & Posts (`/api/posts`)
-- `GET /api/posts` — List published posts (supports `page`, `limit`, `search`, `category`, `tag`, `featured`).
-- `GET /api/posts/slug/{slug}` — Fetch post by unique slug & record view.
-- `GET /api/posts/{id}` — Fetch post by numeric ID.
-- `POST /api/posts` — Create a new post (Draft or Published).
-- `PUT /api/posts/{id}` — Update an existing post (Author or Admin).
-- `DELETE /api/posts/{id}` — Permanently delete an article.
-- `PATCH /api/posts/{id}/publish` — Quick-publish an article.
-- `PATCH /api/posts/{id}/unpublish` — Return an article to draft status.
-- `GET /api/posts/{id}/related` — Fetch related articles based on category/tags.
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+```
 
-### Categories (`/api/categories`)
-- `GET /api/categories` — List all categories with published post counts.
-- `POST /api/categories` — Create a new category *(Admin only)*.
-- `PUT /api/categories/{id}` — Update category details *(Admin only)*.
-- `DELETE /api/categories/{id}` — Remove a category *(Admin only)*.
+### Articles — `/api/posts`
 
-### Tags (`/api/tags`)
-- `GET /api/tags` — List all tags with usage counts.
-- `POST /api/tags` — Create a tag *(Authenticated users)*.
-- `DELETE /api/tags/{id}` — Delete a tag *(Admin only)*.
+```text
+GET    /api/posts
+GET    /api/posts/slug/{slug}
+GET    /api/posts/{id}
+POST   /api/posts
+PUT    /api/posts/{id}
+DELETE /api/posts/{id}
+PATCH  /api/posts/{id}/publish
+PATCH  /api/posts/{id}/unpublish
+GET    /api/posts/{id}/related
+```
 
-### Discussion & Comments (`/api/posts/{id}/comments`)
-- `GET /api/posts/{id}/comments` — List approved comments for an article.
-- `POST /api/posts/{id}/comments` — Submit a comment (Authenticated or Guest).
-- `DELETE /api/comments/{id}` — Delete a comment (Author or Admin).
+Supported listing parameters include:
 
-### Author Dashboard (`/api/dashboard`)
-- `GET /api/dashboard/stats` — Retrieve author article metrics and platform summary.
-- `GET /api/dashboard/posts` — List author posts with status filtering.
+```text
+page
+limit
+search
+category
+tag
+featured
+```
 
-### Governance & Users (`/api/users`)
-- `GET /api/users/me` — Retrieve current user profile with post metrics.
-- `PUT /api/users/me` — Update display name, avatar, and bio.
-- `GET /api/users` — List all registered users *(Admin only)*.
-- `PATCH /api/users/{id}/status` — Toggle user active/inactive status *(Admin only)*.
-- `PATCH /api/users/{id}/role` — Update user role between `user` and `admin` *(Admin only)*.
+### Categories — `/api/categories`
+
+```text
+GET    /api/categories
+POST   /api/categories
+PUT    /api/categories/{id}
+DELETE /api/categories/{id}
+```
+
+### Tags — `/api/tags`
+
+```text
+GET    /api/tags
+POST   /api/tags
+DELETE /api/tags/{id}
+```
+
+### Comments
+
+```text
+GET    /api/posts/{id}/comments
+POST   /api/posts/{id}/comments
+DELETE /api/comments/{id}
+```
+
+### Dashboard
+
+```text
+GET /api/dashboard/stats
+GET /api/dashboard/posts
+```
+
+### Users
+
+```text
+GET   /api/users/me
+PUT   /api/users/me
+GET   /api/users
+PATCH /api/users/{id}/status
+PATCH /api/users/{id}/role
+```
+
+---
+
+## 🔄 Publishing Workflow
+
+```mermaid
+flowchart LR
+    Register[Register / Login]
+        --> Dashboard[Author Dashboard]
+
+    Dashboard --> Create[Create Article]
+    Create --> Editor[Post Studio]
+
+    Editor --> Category[Category]
+    Editor --> Tags[Tags]
+    Editor --> Preview[Live Preview]
+
+    Category --> Draft[Save Draft]
+    Tags --> Draft
+    Preview --> Draft
+
+    Draft --> Edit[Edit Article]
+    Edit --> Publish[Publish]
+
+    Publish --> Public[Public Blog]
+    Public --> Reader[Article Reader]
+
+    Reader --> Views[View Tracking]
+    Reader --> Comments[Comments]
+    Reader --> Related[Related Articles]
+```
 
 ---
 
 ## 🧪 Automated Testing Suite
 
-The application includes an extensive automated test suite covering authentication, authorization rules, post lifecycles, XSS content sanitization, slug collision resolution, and admin permissions.
+The application includes automated tests covering authentication, authorization, posts, security, categories, tags, and important business rules.
 
-Execute tests with pytest:
+Run:
+
 ```bash
 python -m pytest backend/tests -v
 ```
 
-### Verified Test Cases:
-- `test_register_success` — Registers new author with valid credentials.
-- `test_register_duplicate_email` — Verifies rejection of duplicate email (400 Bad Request).
-- `test_register_short_password` — Verifies password length constraints (422 Unprocessable Entity).
-- `test_login_success` — Validates authentication and token issuing.
-- `test_login_invalid_password` — Rejects incorrect passwords (401 Unauthorized).
-- `test_login_nonexistent_user` — Rejects unknown emails.
-- `test_get_me_authenticated` — Returns profile for valid Bearer token.
-- `test_get_me_unauthenticated` — Blocks unauthenticated requests.
-- `test_create_post_success` — Creates article, assigns author ID, calculates reading time.
-- `test_html_sanitization_in_post` — Verifies malicious `<script>` and `javascript:` tags are sanitized.
-- `test_create_post_unauthenticated` — Prevents unauthorized article creation.
-- `test_get_posts_public` — Confirms public visitors only see published posts.
-- `test_author_can_view_own_draft` — Verifies author can view own draft while public cannot.
-- `test_unauthorized_user_cannot_update_post` — **Enforces RBAC**: User A cannot edit User B's post.
-- `test_admin_can_update_any_post` — Confirms administrators can moderate any article.
-- `test_search_and_category_filtering` — Verifies keyword and tag query filtering.
-- `test_publish_and_unpublish` — Verifies state transitions between published and draft.
-- `test_delete_post` — Tests permanent deletion with relationship cascading.
-- `test_list_categories` & `test_create_category_admin_only` — Tests category endpoints and admin protection.
-- `test_list_tags` & `test_create_tag_authenticated` — Tests tag creation and retrieval.
+### Verified Test Areas
+
+- Successful registration
+- Duplicate email rejection
+- Password validation
+- Successful login
+- Invalid password rejection
+- Nonexistent-user rejection
+- Authenticated `/me` access
+- Unauthenticated access protection
+- Successful post creation
+- Reading-time calculation
+- HTML sanitization
+- Unauthorized post creation prevention
+- Public post visibility
+- Author draft access
+- Ownership-based update protection
+- Admin post management
+- Search and category filtering
+- Publishing
+- Unpublishing
+- Post deletion
+- Relationship cascading
+- Category listing
+- Admin-only category creation
+- Tag listing
+- Authenticated tag creation
+
+### Test Count
+
+```text
+22 automated tests
+```
 
 ---
 
-## 🛡️ Security & Defense In Depth
+## 🛡️ Security & Defense in Depth
 
-1. **Password Security**: Passwords are never stored in plaintext. Hashing is performed using native `bcrypt` with 12 automatic salt rounds.
-2. **Token Security**: JWT tokens are cryptographically signed with HMAC-SHA256 (`HS256`) and carry explicit expiration timestamps.
-3. **Strict Authorization (RBAC)**: Backend endpoints strictly check author ownership and admin privileges. Frontend UI hiding is never solely relied upon.
-4. **SQL Injection Prevention**: All queries use SQLAlchemy ORM with parameterized SQL inputs. No raw unsanitized SQL string concatenation.
-5. **Cross-Site Scripting (XSS) Prevention**: Submitted article HTML is processed through a strict whitelist sanitizer (`BeautifulSoup4`), stripping `<script>`, `<iframe>`, `javascript:`, and dangerous `on*` event handlers.
-6. **Error Masking**: Database internals and raw tracebacks are concealed behind uniform JSON responses in production environments.
+### 1. Password Security
+
+Passwords are not stored as plaintext.
+
+The application uses bcrypt-based password hashing.
+
+### 2. JWT Security
+
+JWT tokens are cryptographically signed and contain expiration information.
+
+Configured algorithm:
+
+```text
+HS256
+```
+
+### 3. Role-Based Access Control
+
+Supported roles:
+
+```text
+user
+admin
+```
+
+Backend authorization is enforced independently of frontend UI visibility.
+
+### 4. Ownership Protection
+
+Authors cannot modify another author's protected content unless they have appropriate administrative permissions.
+
+### 5. SQL Injection Prevention
+
+SQLAlchemy ORM and parameterized database operations are used instead of unsafe SQL string concatenation.
+
+### 6. XSS Protection
+
+Article HTML is sanitized before processing.
+
+Dangerous content such as:
+
+```text
+<script>
+javascript:
+<iframe>
+onerror=
+onclick=
+```
+
+is handled by the application's sanitization rules.
+
+### 7. Environment Security
+
+Sensitive values should remain in:
+
+```text
+.env
+```
+
+and should never be committed to a public repository.
+
+### 8. Error Handling
+
+Application errors are returned through structured API responses rather than unnecessarily exposing internal implementation details.
+
+---
+
+## 📊 Platform Capability Overview
+
+```text
+                       BLOGSPHERE
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+       Readers          Authors          Admins
+          │                │                │
+          │                │                │
+      Browse Posts     Create Posts     Manage Users
+      Search           Edit Posts       Manage Roles
+      Categories       Draft Posts      Manage Categories
+      Read Articles    Publish          Manage Tags
+      Comments         Unpublish        Moderate Content
+      View Tracking    Dashboard        Platform Control
+          │                │                │
+          └────────────────┼────────────────┘
+                           │
+                    FastAPI REST API
+                           │
+                     SQLAlchemy ORM
+                           │
+                      MySQL Database
+```
+
+---
+
+## 💡 Key Learning Outcomes
+
+This project demonstrates practical experience with:
+
+- Full-stack web development
+- FastAPI
+- Python
+- SQLAlchemy ORM
+- MySQL
+- REST API architecture
+- JWT authentication
+- bcrypt password hashing
+- Role-based authorization
+- CRUD operations
+- Relational database design
+- Blog/CMS architecture
+- Publishing workflows
+- Draft and publish systems
+- Categories
+- Tags
+- Search and filtering
+- Comments
+- Threaded discussions
+- View tracking
+- HTML sanitization
+- XSS defense
+- Responsive frontend development
+- Vanilla JavaScript
+- Automated API testing
+- Git and GitHub
+- Environment-based configuration
+- Application security
+
+---
+
+## 👨‍💻 Developer
+
+**Saksham Pandey**
+
+**BS-MS in Artificial Intelligence and Cybersecurity**  
+**IIT Patna**
+
+GitHub:  
+https://github.com/sakshampandey380
+
+LinkedIn:  
+https://www.linkedin.com/in/saksham-pandey-184515250/
 
 ---
 
 ## 📜 License
 
 This project is licensed under the **MIT License**.
+
+The application was developed as part of a **Full-Stack Development Internship / QSkills Assessment** and is intended for educational, demonstration, and portfolio purposes.
